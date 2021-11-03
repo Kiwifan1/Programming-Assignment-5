@@ -6,7 +6,8 @@
  * Description: A pet store using Linked lists to store data
  * Notes: I will likely be writing everything from scratch again, to avoid the issue I held in the previous PAs with counting
  * 
- * 
+ *  11/3/21 - Added variables
+ *  
  **/
 
 #include "header.h"
