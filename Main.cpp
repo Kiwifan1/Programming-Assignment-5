@@ -31,5 +31,8 @@ int main()
     double averageDaysAtStore = 0;
     bool firstRow = true;
     //PetStoreList storeList; //the linked list object
-    cout << "hello world";
+    if(openFiles(infile, outfile))
+    {
+        readPetStoreInfo(firstRow, infile, header);
+    }
 }

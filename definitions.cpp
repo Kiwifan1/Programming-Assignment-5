@@ -8,6 +8,7 @@
  * 
  *  11/3/21 - created definitions.cpp
  *  11/3/21 - created skeleton methods
+ *  11/3/21 - created methods for almost all the class, imported methods from PA1
  **/
 
 #include "header.h"
@@ -25,7 +26,10 @@
  **/
 PetStoreList::PetStoreData* PetStoreList::createNode(string storeName)
 {
-
+   PetStoreData* newNode = new PetStoreData; //on heap
+   newNode->petStoreName = storeName;
+   newNode->nextStore = nullptr;
+   return newNode;
 }
 
 /**
@@ -40,7 +44,21 @@ PetStoreList::PetStoreData* PetStoreList::createNode(string storeName)
  **/
 void PetStoreList::insertAtEnd(PetStoreData* newStoreData)
 {
-
+   PetStoreData* nodePtr = nullptr;
+   //if header is empty
+   if(headPtr == nullptr)
+   {
+      headPtr = newStoreData;
+   }
+   else
+   {
+      //while the node still has something its pointing to
+      while(nodePtr->nextStore != nullptr)
+      {
+         nodePtr = nodePtr->nextStore;
+      }
+      nodePtr->nextStore = newStoreData;
+   }
 }
 
 /**
@@ -58,7 +76,23 @@ void PetStoreList::insertAtEnd(PetStoreData* newStoreData)
  **/
 void PetStoreList::addPetData(string storeName, string pName, string pType, int numDays)
 {
-
+   PetData petInfo;
+   PetStoreData* nodePtr = headPtr;
+   petInfo.numDaysAtStore = numDays;
+   petInfo.petName = pName;
+   petInfo.petType = pType;
+   
+   //while there is another pet store to look at
+   while(nodePtr->nextStore != nullptr)
+   {
+      //if the store matches what is being added
+      if(nodePtr->petStoreName == storeName)
+      {
+         nodePtr->petData.push_back(petInfo);
+         break;
+      }
+      nodePtr = nodePtr->nextStore;
+   }
 }
 
 /**
@@ -72,7 +106,7 @@ void PetStoreList::addPetData(string storeName, string pName, string pType, int 
  **/
 void PetStoreList::displayPetList() const
 {
-
+   
 }
 
 /**
@@ -102,7 +136,24 @@ void PetStoreList::writePetList(ofstream &outfile)
  **/
 bool PetStoreList::storeInList(string name)
 {
-
+   PetStoreData* nodePtr = headPtr;
+   if(nodePtr == nullptr)
+   {
+      return false;
+   }
+   else
+   {
+      //while there is another store in the linked list
+      while(nodePtr->nextStore != nullptr)
+      {
+         if(name == nodePtr->petStoreName)
+         {
+            return true;
+         }
+         nodePtr = nodePtr->nextStore;
+      }
+   }
+   return false;
 }
 
 /**
@@ -116,7 +167,36 @@ bool PetStoreList::storeInList(string name)
  **/
 void PetStoreList::calculatePetSummary()
 {
-
+   PetStoreData* nodePtr = headPtr;
+   PetData petData;
+   int totalPets = 0;
+   int totalDays = 0;
+   int min = INT_MAX;
+   int max = INT_MIN;
+   int average;
+   //while there is another store to look at
+   while (nodePtr->nextStore != nullptr)
+   {
+      //for every pet in the pet store
+      for (int i = 0; i < nodePtr->petData.size(); i++)
+      {
+         petData = nodePtr->petData.at(i);
+         totalDays += petData.numDaysAtStore;
+         //if the days at this store is lower than previous
+         if(petData.numDaysAtStore < min)
+         {
+            min = petData.numDaysAtStore;
+         }
+         //if the days at this store is higher than previous
+         if(petData.numDaysAtStore > max)
+         {
+            max = petData.numDaysAtStore;
+         }
+      }
+      totalPets += nodePtr->petData.size();
+      nodePtr = nodePtr->nextStore;
+   }
+   average = totalPets/totalDays;
 }
 
 /**
@@ -130,7 +210,8 @@ void PetStoreList::calculatePetSummary()
  **/
 void PetStoreList::displayPetSummary() const
 {
-    
+   cout << "__________________________________";
+   cout << "Total number of pets: ";
 }
 
 /**
@@ -163,7 +244,9 @@ void PetStoreList::writePetSummary(ofstream &outfile)
  **/
 void PetStoreList::insertAtFront(PetStoreData* newStoredata)
 {
-
+   PetStoreData* nodePtr = nullptr;
+   newStoredata->nextStore = headPtr;
+   headPtr = newStoredata;
 }
 
 /**
@@ -179,7 +262,22 @@ void PetStoreList::insertAtFront(PetStoreData* newStoredata)
  **/
 bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
 {
-
+   PetStoreData* nodePtr = headPtr;
+   int pos;
+   //while there is another store to point to
+   while(nodePtr->nextStore != nullptr)
+   {
+      //if we are at the index to insert
+      if(pos == position)
+      {
+         newStoredata->nextStore = nodePtr->nextStore;
+         nodePtr->nextStore = newStoredata;
+         return true;
+      }
+      pos++;
+      nodePtr = nodePtr->nextStore;
+   }
+   return false;
 }
 
 /**
@@ -194,5 +292,349 @@ bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
  **/
 bool PetStoreList::deleteStore(string nameOfStoreToRemove)
 {
+   PetStoreData* nodePtr = headPtr;
+   PetStoreData* prevNodePtr = headPtr;
+   //while there is another store to point to 
+   while(nodePtr->nextStore != nullptr)
+   {
+      //if the name of the pet store matches what needs to be removed
+      if(nodePtr->petStoreName == nameOfStoreToRemove)
+      {
+         prevNodePtr->nextStore = nodePtr->nextStore;
+         nodePtr->nextStore = nullptr; //sets reference to the node 
+         delete nodePtr;
+         return true;
+      }
+      prevNodePtr = nodePtr;
+      nodePtr = nodePtr->nextStore;
+   }
+   return false;
+}
 
+//------------FUNCTION METHODS FOR MAIN-----------------------
+
+/**
+ * Function: openFiles()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/10/21
+ * Description: Opens and reads the header file for the input file, as well as opening up the output file for later use
+ * Input params: ifstream& input: which is the variable (by-ref) being passed to open up petstore.csv; ifstream& output: the variable (by-ref) being passed to open up petreport.txt
+ * Return: pass or fail of function to open up both files
+ * Pre: unopened files
+ * Post: opened petstore.csv, and opened petreport.txt
+ * */
+bool openFiles(ifstream& input, ofstream& output)
+{
+    bool pass = false;
+    input.open("petstore.csv");
+    output.open("petreport.txt");
+
+    //pass/fail conditions
+    if(output.is_open() && input.is_open()){
+        pass = true;
+    }
+
+    return pass;
+}
+
+/**
+ * Function: stringToInteger()
+ * Date Created: 9/6/21
+ * Date Last Modified: 9/11/21
+ * Description: Takes an incoming string value and returns it as an integer
+ * Input params: a string 'substring'
+ * Return: an integer formatted version of 'substring'
+ * Pre: a string of a number
+ * Post: an integer version of the string
+ * */
+int stringToInteger(string substring)
+{
+    int tempInt;
+    stringstream toInteger(substring); // allows for parsing into an integer
+    toInteger >> tempInt;
+    return tempInt;
+}
+
+
+/**
+ * Function: readPetStoreInfo()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/11/21
+ * Description: Reads the incoming pet store info and separates it as needed
+ * Input params: a by-ref input file
+ * Return: nothing
+ * Pre: an opened input file
+ * Post: a opened, and processed input file
+ * */
+void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header)
+{
+    string word;
+    string tempWord;
+    string headerWords;
+    stringstream lineToParse;
+    int count = 0;
+    int dataLine = 0;
+
+    //if this is the first row then read it, and place into header vector, otherwise dictate to another vector
+    while(input.good())
+    {
+        if(firstRow)
+        {
+            firstRow = false;
+            getline(input, headerWords); // get the whole line at the file
+            lineToParse.str(headerWords); // turn the line into something that we can parse
+
+            //loops until the line hits its end line point
+            while(lineToParse.good())
+            {
+                getline(lineToParse, tempWord, ','); // separates word by comma
+                header.push_back(tempWord);
+            }
+
+            cout << "Processed " << header.size() << " header columns: ";
+
+            //for loop that simply adds the commas for console print
+            for (int i = 0; i < header.size(); i++)
+            {
+                cout << header.at(i);
+                if(i < header.size() - 1)
+                {
+                    cout << ", ";
+                }
+                else
+                {
+                    cout << "\n\n";
+                }
+            }        
+        }
+        else
+        {
+            getline(input, word);  // get the whole line of the file
+            lineToParse.clear(); // clear stringstream
+            lineToParse.str(word); // replace stringstream with the new line
+
+            while(lineToParse.good())
+            {
+                getline(lineToParse, word, ','); // cuts line at point with comma
+
+                //switch statement so that it will go through the 'word' and add each part to its correct vector
+                switch (count)
+                {
+                    case 0:
+                        petStoreNames.push_back(word);
+                        break;
+                    case 1: 
+                        petNames.push_back(word);
+                        break;
+                    case 2:
+                        petTypes.push_back(word);
+                        break;
+                    case 3:
+                        //since we are gauranteed to have it follow 4 column format, case 3 will be the end of the processing of a store
+                        numDaysAtStore.push_back(stringToInteger(word));
+                        cout << "Processed a " << petTypes.at(dataLine) << ", \"" << petNames.at(dataLine) << "\" ... " << numDaysAtStore.at(dataLine) << " day(s) on site at store \"" << petStoreNames.at(dataLine) << "\"\n";
+                        dataLine++;
+                        count = -1; // count++ is at end so this must be here
+                        break;
+                    default:
+                        break;
+                }
+                count++;
+            }
+        }
+    }
+}
+
+/**
+ * Function: averagePetDays()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/11/21
+ * Description: adds the amount of total days that the pets have been in a store and divides by amount of pets
+ * Input params: by reference of the vector holding all the number of days at a store
+ * Return: the average number of days a pet stays at a store
+ * Pre: vector of the total days spent by pets
+ * Post: average days spent by all pets at all pet stores
+ * */
+int averagePetDays(vector<int>& numDaysAtStore)
+{
+    int numPets = 0;
+    int numDays = 0;
+
+    //for loop that goes through all the days at a store, and sums the total days by the amount of pets that stayed there
+    for(int i = 0; i < numDaysAtStore.size(); i ++)
+    {
+        numPets ++;
+        numDays += numDaysAtStore.at(i);
+    }
+    return (numDays/numPets);
+}
+
+/**
+ * Function: uniquePetStores()
+ * Date Created: 9/8/21
+ * Date Last Modified: 9/11/21
+ * Description: Takes the list of all pet stores, and adds non-duplicates to a list so that it will only contain unique pet stores
+ * Input params: uniquePetStoreNames -> vector going to hold unique pet stores; uniquePetStoreNameCounts -> going tot hold the number of pets that each unique pet store has; 
+ *               petStoreNames -> main vector
+ *                  who's data is being grabbed
+ * Return: nothing
+ * Pre: empty uniquePetStoreNames and Counts
+ * Post: filled uniquePetStoreNames and Counts from petStoreNames
+ * */
+void uniquePetStores(vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, vector<string>& petStoreNames)
+{
+
+    if(petStoreNames.size() == 0)
+    {
+        cout << "There are no pet stores!\n";
+        return;
+    }
+
+    else
+    {
+        //for loop going for entire size of petStoreNames
+        for(int i = 0; i < petStoreNames.size(); i++)
+        {
+
+            //if the petstore name does not already exist in the uniquePetStoreNames, then it will add it to the end of the vector
+            if(find(uniquePetStoreNames.begin(), uniquePetStoreNames.end(), petStoreNames.at(i)) == uniquePetStoreNames.end())
+            {
+                uniquePetStoreNames.push_back(petStoreNames.at(i));
+                uniquePetStoreNameCounts.push_back(1);
+            }
+
+            //else if it does exist
+            else
+            {
+                //checks for index of the matching pet store name, and adds to the amount of duplicate names (ie. the amount of pets)
+                for(int k = 0; k < uniquePetStoreNames.size(); k ++)
+                {
+                    // if the uniquePetStoreName matches the petStoreName at the 'i' index, it will increment the count of pets by 1
+                    if(uniquePetStoreNames.at(k) == petStoreNames.at(i))
+                    {
+                        uniquePetStoreNameCounts.at(k) ++;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * Function: storeMostPets()
+ * Date Created: 9/8/21
+ * Date Last Modified: 9/11/21
+ * Description: searches through the uniquePetStoreNameCounts vector, and finds the index containing the highest number
+ * Input params: uniquePetStoreNameCounts --> parallel vector containing amount of pets for uniquePetStores
+ * Return: the index of the petstore containing the most pets
+ * Pre: unchosen index for most pets
+ * Post: chosen index for most pets
+ * */
+int storeMostPets(vector<int>& uniquePetStoreNameCounts)
+{
+    int maxIndex = 0;
+    int maxNum = 0;
+
+    //for loop going through uniquePetStoreNameCounts entire vector
+    for(int i = 0; i < uniquePetStoreNameCounts.size(); i ++)
+    {
+        //if the number is bigger than the previous maxNum (starting at 0) then hold the index
+        if(uniquePetStoreNameCounts.at(i) > maxNum)
+        {
+            maxNum = uniquePetStoreNameCounts.at(i);
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
+
+
+/**
+ * Function: totalPets()
+ * Date Created: 9/8/21
+ * Date Last Modified: 9/11/21
+ * Description: counts the total amount of pets within all the unique pet stores
+ * Input params: uniquePetStoreNameCounts -> the unique pet store pet amounts 
+ * Return: the total amount of pets within the uniqueStore
+ * Pre: unknown amount of pets within file
+ * Post: known total amount of pets within file
+ * */
+int totalPets(vector<int>& uniquePetStoreNameCounts)
+{
+    int totalPetAmount = 0;
+    //for loop going through entire uniquePetStoreNameCounts vector
+    for(int i = 0; i < uniquePetStoreNameCounts.size(); i ++)
+    {
+        totalPetAmount += uniquePetStoreNameCounts.at(i);
+    }
+    return totalPetAmount;
+}
+
+/**
+ * Function: randomPet()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/11/21
+ * Description: gets a random pet from the petName vector, this is for pet of the month
+ * Input params: petNames -> vector holding petNames from file
+ * Return: index of the pet chosen in petNames vector
+ * Pre: unchosen pet of the month
+ * Post: chosen index for pet of the month
+ * */
+int randomPet(vector<string>& petNames)
+{
+    srand(time(0)); //set random seed
+    int randIndex = rand() % petNames.size(); //random index between 0 and petNames size
+    return randIndex;
+}
+
+
+/**
+ * Function: writeFile()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/11/21
+ * Description: writes the information grabbed from reading the file, to an output file
+ * Input params: output -> the output stream to write to file; petNames -> all of the pet names in the read file; uniquePetStoreNames -> all the unique pet store names;
+ *                  uniquePetStoreNameCounts -> the amount of pets each unique pet store has; storeMostPetsIndex -> store containing most pets index; 
+ *                  averageDaysAtStore - > average days spend by all pets at stores;
+ *                  petOfTheMonthIndex -> index of the randomly chosen pet of the month; totalPets -> total amount of pets within all the petStores
+ * Return: a pass/fail boolean of whether file closed after writing
+ * Pre: an unwritten file
+ * Post: a written and closed out file with pet data
+ * */
+bool writeFile(ofstream& output, vector<string>& petNames, vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, int storeMostPetsIndex, double averageDaysAtStore, int petOfTheMonthIndex, int totalPets)
+{
+    bool pass = false;
+    cout << "Generating summary report...\n\n";
+    output << "Pet Store CSV Summary Report\n\n----------------------------\n\n\n";
+    output << "Pet Stores: ";
+
+    //for loop goes through all the unique pet stores
+    for (int i = 0; i < uniquePetStoreNames.size(); i++)
+    {
+        output << uniquePetStoreNames.at(i);
+
+        //simply adds commas to console
+        if (i < uniquePetStoreNames.size() - 1)
+        {
+            output << ", ";
+        }
+        else{
+            output << "\n\n";
+        }
+        
+    }
+    output << "Total number of pets: " << totalPets << "\n\n\n"; // total pet count
+    output << "Pet store with the most pets: " << uniquePetStoreNames.at(storeMostPetsIndex) << endl; //which pet store had most pets
+    output << "Number of pets at " << uniquePetStoreNames.at(storeMostPetsIndex) << ": " << uniquePetStoreNameCounts.at(storeMostPetsIndex) << "\n\n\n"; // how many pets did the pet store with most have
+    output << "Pet average days on site across all stores: " << averageDaysAtStore << endl; //average days pets spent on all stores
+    output << "Employee pet of the month choice: \"" << petNames.at(petOfTheMonthIndex) << "\""; //random pet of the month
+    
+    output.close();
+
+    //if the output stream was able to close file
+    if(!output.is_open()){
+        pass = true;
+    }
+    return pass;
 }
