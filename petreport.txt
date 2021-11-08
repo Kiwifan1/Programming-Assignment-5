@@ -1,13 +1,13 @@
 Pet Store CSV Summary Report
 __________________________________
-Total number of pets: 12
-Average number of days at pet store: 35
+Total number of pets: 7
+Average number of days at pet store: 31
 Shortest stay at pet store: 1
 Longest stay at pet store: 101
 __________________________________
 Pet Store Name: Fur Get Me Not
 **********************************
-| Number of pets: 5
+| Number of pets: 3
 | Pet Information: 
 > Pet 1 Name: Chris P. Bacon
 > Pet Type: pig
@@ -21,18 +21,10 @@ Pet Store Name: Fur Get Me Not
 > Pet Type: snake
 > Number of days at store: 12
 ----------------------------
-> Pet 4 Name: Jack Meower
-> Pet Type: cat
-> Number of days at store: 24
-----------------------------
-> Pet 5 Name: Severus Snake
-> Pet Type: snake
-> Number of days at store: 12
-----------------------------
 __________________________________
 Pet Store Name: Pick of the Litter
 **********************************
-| Number of pets: 3
+| Number of pets: 2
 | Pet Information: 
 > Pet 1 Name: Mary Puppins
 > Pet Type: dog
@@ -42,28 +34,16 @@ Pet Store Name: Pick of the Litter
 > Pet Type: dog
 > Number of days at store: 101
 ----------------------------
-> Pet 3 Name: Barktholamew
-> Pet Type: dog
-> Number of days at store: 101
-----------------------------
 __________________________________
 Pet Store Name: For Pet's Sake
 **********************************
-| Number of pets: 4
+| Number of pets: 2
 | Pet Information: 
 > Pet 1 Name: Jean-Clawed Van Damme
 > Pet Type: cat
 > Number of days at store: 60
 ----------------------------
 > Pet 2 Name: Lame Duck
-> Pet Type: duck
-> Number of days at store: 5
-----------------------------
-> Pet 3 Name: Jean-Clawed Van Damme
-> Pet Type: cat
-> Number of days at store: 60
-----------------------------
-> Pet 4 Name: Lame Duck
 > Pet Type: duck
 > Number of days at store: 5
 ----------------------------

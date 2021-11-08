@@ -16,6 +16,54 @@
 
 #include "header.h"
 
+
+//-----------------------FUNCTION METHODS FOR MAIN-----------------------
+
+/**
+ * Function: openFiles()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/10/21
+ * Description: Opens and reads the header file for the input file, as well as opening up the output file for later use
+ * Input params: ifstream& input: which is the variable (by-ref) being passed to open up petstore.csv; ifstream& output: the variable (by-ref) being passed to open up petreport.txt
+ * Return: pass or fail of function to open up both files
+ * Pre: unopened files
+ * Post: opened petstore.csv, and opened petreport.txt
+ * */
+bool openFiles(ifstream& input, ofstream& output)
+{
+    bool pass = false;
+    input.open("petstoredata.csv");
+    output.open("petreport.txt");
+
+    //pass/fail conditions
+    if(output.is_open() && input.is_open()){
+        pass = true;
+    }
+
+    return pass;
+}
+
+/**
+ * Function: stringToInteger()
+ * Date Created: 9/6/21
+ * Date Last Modified: 9/11/21
+ * Description: Takes an incoming string value and returns it as an integer
+ * Input params: a string 'substring'
+ * Return: an integer formatted version of 'substring'
+ * Pre: a string of a number
+ * Post: an integer version of the string
+ * */
+int stringToInteger(string substring)
+{
+    int tempInt;
+    stringstream toInteger(substring); // allows for parsing into an integer
+    toInteger >> tempInt;
+    return tempInt;
+}
+
+
+//-----------------------FUNCTION METHODS FOR PETSTORELIST-----------------------
+
 //constructor
 PetStoreList::PetStoreList()
 {
@@ -132,6 +180,24 @@ void PetStoreList::addPetData(string storeName, string pName, string pType, int 
 /**
  * Name: Joshua Venable 
  * Date created: 11/3/21
+ * Date last modified: 11/3/21
+ * Description: prints this object's PetSummary values of the PetStoreList
+ * @return nothing
+ * @pre unprinted out summary of pets calculated
+ * @post printed to console summary of pets
+ **/
+void PetStoreList::displayPetSummary() const
+{
+   cout << "__________________________________" << endl;
+   cout << "Total number of pets: " << summaryData.numPets << endl;
+   cout << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
+   cout << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
+   cout << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
+}
+
+/**
+ * Name: Joshua Venable 
+ * Date created: 11/3/21
  * Date last modified: 11/8/21
  * Description: prints the contents of the PetStoreList in forward order
  * @return nothing
@@ -171,6 +237,27 @@ void PetStoreList::displayPetList() const
         
     }
     
+}
+
+/**
+ * Name: Joshua Venable 
+ * Date created: 11/3/21
+ * Date last modified: 11/8/21
+ * Description: writes this object's PetSummary values of the PetStoreList to an output 
+    file
+ * @param outfile the outfile stream to write to the output file
+ * @return nothing
+ * @pre unwritten/uncreated output file
+ * @post written and created output file of petSummary
+ **/
+void PetStoreList::writePetSummary(ofstream &outfile)
+{
+    outfile << "Pet Store CSV Summary Report" << endl;
+    outfile << "__________________________________" << endl;
+    outfile << "Total number of pets: " << summaryData.numPets << endl;
+    outfile << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
+    outfile << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
+    outfile << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
 }
 
 /**
@@ -295,45 +382,6 @@ void PetStoreList::calculatePetSummary()
    summaryData.averageDaysAtStore = totalDays/summaryData.numPets;
 }
 
-/**
- * Name: Joshua Venable 
- * Date created: 11/3/21
- * Date last modified: 11/3/21
- * Description: prints this object's PetSummary values of the PetStoreList
- * @return nothing
- * @pre unprinted out summary of pets calculated
- * @post printed to console summary of pets
- **/
-void PetStoreList::displayPetSummary() const
-{
-   cout << "__________________________________" << endl;
-   cout << "Total number of pets: " << summaryData.numPets << endl;
-   cout << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
-   cout << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
-   cout << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
-}
-
-/**
- * Name: Joshua Venable 
- * Date created: 11/3/21
- * Date last modified: 11/3/21
- * Description: writes this object's PetSummary values of the PetStoreList to an output 
-    file
- * @param outfile the outfile stream to write to the output file
- * @return nothing
- * @pre unwritten/uncreated output file
- * @post written and created output file of petSummary
- **/
-void PetStoreList::writePetSummary(ofstream &outfile)
-{
-    outfile << "Pet Store CSV Summary Report" << endl;
-    outfile << "__________________________________" << endl;
-    outfile << "Total number of pets: " << summaryData.numPets << endl;
-    outfile << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
-    outfile << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
-    outfile << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
-}
-
 //------------------BONUS FUNCTIONS---------------------------
 
 /**
@@ -413,38 +461,6 @@ bool PetStoreList::deleteStore(string nameOfStoreToRemove)
       nodePtr = nodePtr->nextStore;
    }
    return false;
-}
-
-
-/**
- * Name: Joshua Venable
- * Date created: 11/7/21
- * Date last modified: 11/7/21
- * Description: reads total amount of pets for entire storeList
- * @param storeList the linkedList being traversed
- * @return number of pets as an integer
- * @pre unknown amount of pets
- * @post counted pets for every element in storeList
- **/
-void PetStoreList::totalPets() const
-{
-    int totalPetAmount = 0;
-    PetStoreData* nodePtr;
-    if(headPtr == nullptr)
-    {
-        cout << "0";
-        return;
-    }
-    else
-    {
-        nodePtr = headPtr;
-        while(nodePtr != nullptr)
-        {
-            totalPetAmount += nodePtr->petData.size();
-            nodePtr = nodePtr->nextStore;
-        }
-    }
-    cout << totalPetAmount;
 }
 
 /**
@@ -583,48 +599,4 @@ void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<strin
     }
     cout << "All pet store data processed!\n" << endl;
     calculatePetSummary();
-}
-
-//------------FUNCTION METHODS FOR MAIN-----------------------
-
-/**
- * Function: openFiles()
- * Date Created: 9/4/21
- * Date Last Modified: 9/10/21
- * Description: Opens and reads the header file for the input file, as well as opening up the output file for later use
- * Input params: ifstream& input: which is the variable (by-ref) being passed to open up petstore.csv; ifstream& output: the variable (by-ref) being passed to open up petreport.txt
- * Return: pass or fail of function to open up both files
- * Pre: unopened files
- * Post: opened petstore.csv, and opened petreport.txt
- * */
-bool openFiles(ifstream& input, ofstream& output)
-{
-    bool pass = false;
-    input.open("petstoredata.csv");
-    output.open("petreport.txt");
-
-    //pass/fail conditions
-    if(output.is_open() && input.is_open()){
-        pass = true;
-    }
-
-    return pass;
-}
-
-/**
- * Function: stringToInteger()
- * Date Created: 9/6/21
- * Date Last Modified: 9/11/21
- * Description: Takes an incoming string value and returns it as an integer
- * Input params: a string 'substring'
- * Return: an integer formatted version of 'substring'
- * Pre: a string of a number
- * Post: an integer version of the string
- * */
-int stringToInteger(string substring)
-{
-    int tempInt;
-    stringstream toInteger(substring); // allows for parsing into an integer
-    toInteger >> tempInt;
-    return tempInt;
 }
