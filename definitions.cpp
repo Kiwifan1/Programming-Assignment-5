@@ -581,6 +581,7 @@ void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<strin
                 //num days at the store and adding info to the store
                 case 3:
                     petInfo.numDaysAtStore = stringToInteger(word);
+                    //pushes the data into the node, if it already exists, then it won't add a new node
                     petStoreInfo->petData.push_back(petInfo);
                     if(!inLinkedList)
                     {
