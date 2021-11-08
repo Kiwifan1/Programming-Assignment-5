@@ -7,7 +7,7 @@
  * Notes: I will likely be writing everything from scratch again, to avoid the issue I held in the previous PAs with counting
  * 
  *  11/3/21 - Added variables
- *  
+ *  11/8/21 - added display and write to file methods to main
  **/
 
 #include "header.h"
@@ -36,6 +36,6 @@ int main()
     {
         storeList.readPetStoreInfo(firstRow, infile, header, storeListPtr);
     }
-    storeList.displayPetSummary();
-    //storeList.writePetList(outfile);
+    storeList.writePetList(outfile);
+    storeList.displayPetList();
 }
