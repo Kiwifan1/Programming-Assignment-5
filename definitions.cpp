@@ -10,7 +10,8 @@
  *  11/3/21 - created skeleton methods
  *  11/3/21 - created methods for almost all the class, imported methods from PA1
  *  11/7/21 - added constructor and destructor, changed up readPetStore
- **/
+ *  11/8/21 - fixed DisplaySummary and finished up readInfo from csv file
+ * */
 
 #include "header.h"
 
@@ -138,7 +139,8 @@ void PetStoreList::addPetData(string storeName, string pName, string pType, int 
  **/
 void PetStoreList::displayPetList() const
 {
-   
+   displayPetSummary();
+
 }
 
 /**
@@ -181,7 +183,7 @@ bool PetStoreList::storeInList(string name)
    else
    {
       //while there is another store in the linked list
-      while(nodePtr->nextStore != nullptr)
+      while(nodePtr != nullptr)
       {
          if(name == nodePtr->petStoreName)
          {
@@ -206,13 +208,13 @@ void PetStoreList::calculatePetSummary()
 {
    PetStoreData* nodePtr = headPtr;
    PetData petData;
-   int totalPets = 0;
    int totalDays = 0;
-   int min = INT_MAX;
-   int max = INT_MIN;
-   int average;
+   summaryData.numPets = 0;
+   summaryData.minDaysAtStore = INT_MAX;
+   summaryData.maxDaysAtStore = INT_MIN;
+   summaryData.averageDaysAtStore = 0;
    //while there is another store to look at
-   while (nodePtr->nextStore != nullptr)
+   while (nodePtr != nullptr)
    {
       //for every pet in the pet store
       for (int i = 0; i < nodePtr->petData.size(); i++)
@@ -220,20 +222,20 @@ void PetStoreList::calculatePetSummary()
          petData = nodePtr->petData.at(i);
          totalDays += petData.numDaysAtStore;
          //if the days at this store is lower than previous
-         if(petData.numDaysAtStore < min)
+         if(petData.numDaysAtStore < summaryData.minDaysAtStore)
          {
-            min = petData.numDaysAtStore;
+            summaryData.minDaysAtStore = petData.numDaysAtStore;
          }
          //if the days at this store is higher than previous
-         if(petData.numDaysAtStore > max)
+         if(petData.numDaysAtStore > summaryData.maxDaysAtStore)
          {
-            max = petData.numDaysAtStore;
+            summaryData.maxDaysAtStore = petData.numDaysAtStore;
          }
       }
-      totalPets += nodePtr->petData.size();
+      summaryData.numPets += nodePtr->petData.size();
       nodePtr = nodePtr->nextStore;
    }
-   average = totalPets/totalDays;
+   summaryData.averageDaysAtStore = totalDays/summaryData.numPets;
 }
 
 /**
@@ -369,7 +371,7 @@ bool PetStoreList::deleteStore(string nameOfStoreToRemove)
 void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header, PetStoreList* storeListPtr)
 {
     PetStoreData* petStoreInfo;
-    PetStoreData* NodePtr;
+    PetStoreData* nodePtr;
     PetData petInfo;
     string word;
     string tempWord;
@@ -432,6 +434,19 @@ void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<strin
                     if(!inLinkedList)
                     {
                         petStoreInfo = createNode(word);
+                    }
+                    else
+                    {
+                        nodePtr = headPtr;
+                        while(nodePtr != nullptr)
+                        {
+                            if(nodePtr->petStoreName == word)
+                            {
+                                petStoreInfo = nodePtr;
+                                break;
+                            }
+                            nodePtr = nodePtr->nextStore;
+                        }
                     }
                     break;
                 //pet name
