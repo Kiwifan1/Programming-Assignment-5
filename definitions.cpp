@@ -9,9 +9,40 @@
  *  11/3/21 - created definitions.cpp
  *  11/3/21 - created skeleton methods
  *  11/3/21 - created methods for almost all the class, imported methods from PA1
+ *  11/7/21 - added constructor and destructor, changed up readPetStore
  **/
 
 #include "header.h"
+
+//constructor
+PetStoreList::PetStoreList()
+{
+    headPtr = nullptr;
+}
+
+
+//destructor 
+PetStoreList::~PetStoreList()
+{
+    PetStoreData* nodePtr;
+    PetStoreData* nextPtr;
+    //if headPtr is the only one in the linkedList
+    if(headPtr == nullptr){
+        delete headPtr;
+        return;
+    }
+    //go through deleting every node
+    else
+    {
+        nodePtr = headPtr;
+        while(nodePtr != nullptr)
+        {
+            nextPtr = nodePtr->nextStore;
+            delete nodePtr;
+            nodePtr = nextPtr;
+        }
+    }
+}
 
 
 /**
@@ -52,6 +83,7 @@ void PetStoreList::insertAtEnd(PetStoreData* newStoreData)
    }
    else
    {
+       nodePtr = headPtr;
       //while the node still has something its pointing to
       while(nodePtr->nextStore != nullptr)
       {
@@ -121,7 +153,12 @@ void PetStoreList::displayPetList() const
  **/
 void PetStoreList::writePetList(ofstream &outfile)
 {
-    
+    cout << "Generating summary report...\n";
+
+
+
+
+    cout << "Done!";
 }
 
 /**
@@ -210,8 +247,11 @@ void PetStoreList::calculatePetSummary()
  **/
 void PetStoreList::displayPetSummary() const
 {
-   cout << "__________________________________";
-   cout << "Total number of pets: ";
+   cout << "__________________________________" << endl;
+   cout << "Total number of pets: " << summaryData.numPets << endl;
+   cout << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
+   cout << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
+   cout << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
 }
 
 /**
@@ -227,7 +267,12 @@ void PetStoreList::displayPetSummary() const
  **/
 void PetStoreList::writePetSummary(ofstream &outfile)
 {
-
+    outfile << "Pet Store CSV Summary Report" << endl;
+    outfile << "__________________________________" << endl;
+    outfile << "Total number of pets: " << summaryData.numPets << endl;
+    outfile << "Average number of days at pet store: " << summaryData.averageDaysAtStore << endl;
+    outfile << "Shortest stay at pet store: " << summaryData.minDaysAtStore << endl;
+    outfile << "Longest stay at pet store: " << summaryData.maxDaysAtStore << endl;
 }
 
 //------------------BONUS FUNCTIONS---------------------------
@@ -311,69 +356,28 @@ bool PetStoreList::deleteStore(string nameOfStoreToRemove)
    return false;
 }
 
-//------------FUNCTION METHODS FOR MAIN-----------------------
-
-/**
- * Function: openFiles()
- * Date Created: 9/4/21
- * Date Last Modified: 9/10/21
- * Description: Opens and reads the header file for the input file, as well as opening up the output file for later use
- * Input params: ifstream& input: which is the variable (by-ref) being passed to open up petstore.csv; ifstream& output: the variable (by-ref) being passed to open up petreport.txt
- * Return: pass or fail of function to open up both files
- * Pre: unopened files
- * Post: opened petstore.csv, and opened petreport.txt
- * */
-bool openFiles(ifstream& input, ofstream& output)
-{
-    bool pass = false;
-    input.open("petstore.csv");
-    output.open("petreport.txt");
-
-    //pass/fail conditions
-    if(output.is_open() && input.is_open()){
-        pass = true;
-    }
-
-    return pass;
-}
-
-/**
- * Function: stringToInteger()
- * Date Created: 9/6/21
- * Date Last Modified: 9/11/21
- * Description: Takes an incoming string value and returns it as an integer
- * Input params: a string 'substring'
- * Return: an integer formatted version of 'substring'
- * Pre: a string of a number
- * Post: an integer version of the string
- * */
-int stringToInteger(string substring)
-{
-    int tempInt;
-    stringstream toInteger(substring); // allows for parsing into an integer
-    toInteger >> tempInt;
-    return tempInt;
-}
-
-
 /**
  * Function: readPetStoreInfo()
  * Date Created: 9/4/21
- * Date Last Modified: 9/11/21
- * Description: Reads the incoming pet store info and separates it as needed
+ * Date Last Modified: 11/17/21
+ * Description: Reads the incoming pet store info and separates it as needed, adding it to a linked list
  * Input params: a by-ref input file
  * Return: nothing
  * Pre: an opened input file
  * Post: a opened, and processed input file
  * */
-void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header)
+void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header, PetStoreList* storeListPtr)
 {
+    PetStoreData* petStoreInfo;
+    PetStoreData* NodePtr;
+    PetData petInfo;
     string word;
     string tempWord;
     string headerWords;
     stringstream lineToParse;
     int count = 0;
     int dataLine = 0;
+    bool inLinkedList = false;
 
     //if this is the first row then read it, and place into header vector, otherwise dictate to another vector
     while(input.good())
@@ -389,6 +393,7 @@ void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header)
             {
                 getline(lineToParse, tempWord, ','); // separates word by comma
                 header.push_back(tempWord);
+
             }
 
             cout << "Processed " << header.size() << " header columns: ";
@@ -417,32 +422,108 @@ void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header)
             {
                 getline(lineToParse, word, ','); // cuts line at point with comma
 
-                //switch statement so that it will go through the 'word' and add each part to its correct vector
+                //switch statement going through each line
                 switch (count)
                 {
-                    case 0:
-                        petStoreNames.push_back(word);
-                        break;
-                    case 1: 
-                        petNames.push_back(word);
-                        break;
-                    case 2:
-                        petTypes.push_back(word);
-                        break;
-                    case 3:
-                        //since we are gauranteed to have it follow 4 column format, case 3 will be the end of the processing of a store
-                        numDaysAtStore.push_back(stringToInteger(word));
-                        cout << "Processed a " << petTypes.at(dataLine) << ", \"" << petNames.at(dataLine) << "\" ... " << numDaysAtStore.at(dataLine) << " day(s) on site at store \"" << petStoreNames.at(dataLine) << "\"\n";
-                        dataLine++;
-                        count = -1; // count++ is at end so this must be here
-                        break;
-                    default:
-                        break;
+                //getting store and making the node
+                case 0:
+                    //checks if the pet store is already in the system
+                    inLinkedList = storeInList(word);
+                    if(!inLinkedList)
+                    {
+                        petStoreInfo = createNode(word);
+                    }
+                    break;
+                //pet name
+                case 1:
+                    petInfo.petName = word;
+                    break;
+                //pet type
+                case 2:
+                    petInfo.petType = word;
+                    break;
+                //num days at the store and adding info to the store
+                case 3:
+                    petInfo.numDaysAtStore = stringToInteger(word);
+                    petStoreInfo->petData.push_back(petInfo);
+                    if(!inLinkedList)
+                    {
+                        this->insertAtEnd(petStoreInfo);
+                    }
+                    processPet(petInfo, petStoreInfo->petStoreName);
+                    count = -1;
+                    break;
+                default:
+                    break;
                 }
+
                 count++;
             }
         }
     }
+    cout << "All pet store data processed!" << endl;
+    calculatePetSummary();
+}
+
+//------------FUNCTION METHODS FOR MAIN-----------------------
+
+
+/**
+ * Name: Joshua Venable
+ * Date created: 11/7/21
+ * Date last modified: 11/7/21
+ * Description: helper method to print out processing of a pet
+ * @param pet the pet data to be written from
+ * @return  nothing
+ * @pre unprinted pet data
+ * @post processed pet data
+ **/
+void PetStoreList::processPet(PetData pet, string storeName)
+{
+    cout << "Process a " << pet.petType << ", " "\"" << pet.petName << "\" ... " << pet.numDaysAtStore 
+        << " day(s) on site at store \"" <<  storeName << "\"" << endl; 
+}
+
+/**
+ * Function: openFiles()
+ * Date Created: 9/4/21
+ * Date Last Modified: 9/10/21
+ * Description: Opens and reads the header file for the input file, as well as opening up the output file for later use
+ * Input params: ifstream& input: which is the variable (by-ref) being passed to open up petstore.csv; ifstream& output: the variable (by-ref) being passed to open up petreport.txt
+ * Return: pass or fail of function to open up both files
+ * Pre: unopened files
+ * Post: opened petstore.csv, and opened petreport.txt
+ * */
+bool openFiles(ifstream& input, ofstream& output)
+{
+    bool pass = false;
+    input.open("petstoredata.csv");
+    output.open("petreport.txt");
+
+    //pass/fail conditions
+    if(output.is_open() && input.is_open()){
+        pass = true;
+    }
+
+    return pass;
+}
+
+/**
+ * Function: stringToInteger()
+ * Date Created: 9/6/21
+ * Date Last Modified: 9/11/21
+ * Description: Takes an incoming string value and returns it as an integer
+ * Input params: a string 'substring'
+ * Return: an integer formatted version of 'substring'
+ * Pre: a string of a number
+ * Post: an integer version of the string
+ * */
+int stringToInteger(string substring)
+{
+    int tempInt;
+    stringstream toInteger(substring); // allows for parsing into an integer
+    toInteger >> tempInt;
+    return tempInt;
 }
 
 /**
@@ -549,26 +630,35 @@ int storeMostPets(vector<int>& uniquePetStoreNameCounts)
     return maxIndex;
 }
 
-
 /**
- * Function: totalPets()
- * Date Created: 9/8/21
- * Date Last Modified: 9/11/21
- * Description: counts the total amount of pets within all the unique pet stores
- * Input params: uniquePetStoreNameCounts -> the unique pet store pet amounts 
- * Return: the total amount of pets within the uniqueStore
- * Pre: unknown amount of pets within file
- * Post: known total amount of pets within file
- * */
-int totalPets(vector<int>& uniquePetStoreNameCounts)
+ * Name: Joshua Venable
+ * Date created: 11/7/21
+ * Date last modified: 11/7/21
+ * Description: reads total amount of pets for entire storeList
+ * @param storeList the linkedList being traversed
+ * @return number of pets as an integer
+ * @pre unknown amount of pets
+ * @post counted pets for every element in storeList
+ **/
+void PetStoreList::totalPets() const
 {
     int totalPetAmount = 0;
-    //for loop going through entire uniquePetStoreNameCounts vector
-    for(int i = 0; i < uniquePetStoreNameCounts.size(); i ++)
+    PetStoreData* nodePtr;
+    if(headPtr == nullptr)
     {
-        totalPetAmount += uniquePetStoreNameCounts.at(i);
+        cout << "0";
+        return;
     }
-    return totalPetAmount;
+    else
+    {
+        nodePtr = headPtr;
+        while(nodePtr != nullptr)
+        {
+            totalPetAmount += nodePtr->petData.size();
+            nodePtr = nodePtr->nextStore;
+        }
+    }
+    cout << totalPetAmount;
 }
 
 /**
@@ -586,55 +676,4 @@ int randomPet(vector<string>& petNames)
     srand(time(0)); //set random seed
     int randIndex = rand() % petNames.size(); //random index between 0 and petNames size
     return randIndex;
-}
-
-
-/**
- * Function: writeFile()
- * Date Created: 9/4/21
- * Date Last Modified: 9/11/21
- * Description: writes the information grabbed from reading the file, to an output file
- * Input params: output -> the output stream to write to file; petNames -> all of the pet names in the read file; uniquePetStoreNames -> all the unique pet store names;
- *                  uniquePetStoreNameCounts -> the amount of pets each unique pet store has; storeMostPetsIndex -> store containing most pets index; 
- *                  averageDaysAtStore - > average days spend by all pets at stores;
- *                  petOfTheMonthIndex -> index of the randomly chosen pet of the month; totalPets -> total amount of pets within all the petStores
- * Return: a pass/fail boolean of whether file closed after writing
- * Pre: an unwritten file
- * Post: a written and closed out file with pet data
- * */
-bool writeFile(ofstream& output, vector<string>& petNames, vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, int storeMostPetsIndex, double averageDaysAtStore, int petOfTheMonthIndex, int totalPets)
-{
-    bool pass = false;
-    cout << "Generating summary report...\n\n";
-    output << "Pet Store CSV Summary Report\n\n----------------------------\n\n\n";
-    output << "Pet Stores: ";
-
-    //for loop goes through all the unique pet stores
-    for (int i = 0; i < uniquePetStoreNames.size(); i++)
-    {
-        output << uniquePetStoreNames.at(i);
-
-        //simply adds commas to console
-        if (i < uniquePetStoreNames.size() - 1)
-        {
-            output << ", ";
-        }
-        else{
-            output << "\n\n";
-        }
-        
-    }
-    output << "Total number of pets: " << totalPets << "\n\n\n"; // total pet count
-    output << "Pet store with the most pets: " << uniquePetStoreNames.at(storeMostPetsIndex) << endl; //which pet store had most pets
-    output << "Number of pets at " << uniquePetStoreNames.at(storeMostPetsIndex) << ": " << uniquePetStoreNameCounts.at(storeMostPetsIndex) << "\n\n\n"; // how many pets did the pet store with most have
-    output << "Pet average days on site across all stores: " << averageDaysAtStore << endl; //average days pets spent on all stores
-    output << "Employee pet of the month choice: \"" << petNames.at(petOfTheMonthIndex) << "\""; //random pet of the month
-    
-    output.close();
-
-    //if the output stream was able to close file
-    if(!output.is_open()){
-        pass = true;
-    }
-    return pass;
 }

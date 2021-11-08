@@ -145,16 +145,17 @@ public:
 unsuccessful */
     bool deleteStore(string nameOfStoreToRemove);
 
-
+    void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header, PetStoreList* storeListPtr);
     
+    void processPet(PetData petInfo, string storeName);
+
+    void totalPets() const;
 };
 
 
 bool openFiles(ifstream& input, ofstream& output);
 
 int stringToInteger(string substring);
-
-void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header);
 
 int averagePetDays(vector<int>& numDaysAtStore);
 
@@ -163,8 +164,6 @@ int randomPet(vector<string>& petNames);
 void uniquePetStores(vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, vector<string>& petStoreNames);
 
 int storeMostPets(vector<int>& uniquePetStoreNameCounts);
-
-int totalPets(vector<int>& uniquePetStoreNameCounts);
 
 bool writeFile(ofstream& output, vector<string>& petNames, vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, int storeMostPetsIndex, double averageDaysAtStore, int petOfTheMonthIndex, int totalPets);
 

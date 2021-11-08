@@ -30,9 +30,12 @@ int main()
     int daysAtStore = 0;
     double averageDaysAtStore = 0;
     bool firstRow = true;
-    //PetStoreList storeList; //the linked list object
+    PetStoreList storeList; //the linked list object
+    PetStoreList* storeListPtr = &storeList;
     if(openFiles(infile, outfile))
     {
-        readPetStoreInfo(firstRow, infile, header);
+        storeList.readPetStoreInfo(firstRow, infile, header, storeListPtr);
     }
+    storeList.displayPetSummary();
+    //storeList.writePetList(outfile);
 }
