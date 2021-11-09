@@ -5,9 +5,12 @@
  * Programming Assigment: PA5
  * Description: A pet store using Linked lists to store data
  * Notes: I will likely be writing everything from scratch again, to avoid the issue I held in the previous PAs with counting
+ *   -Attempting Extra Credit
  * 
  *  11/3/21 - added Class data from file
  *  11/3/21 - imported methods from PA1
+ *  11/5/21 - added some helper methods for class methods, added readPetInfo the main method reading from file
+ *  11/8/21 - deleted a lot of methods that are unused
  **/
 
 #ifndef HEADER_H
@@ -77,6 +80,7 @@ public:
     * inserts the PetStoreData "node" at the end of the list */
     void insertAtEnd(PetStoreData * newStoredata);
 
+    void insertAtEnd(string storeName);
 
     /* addPetData
     * adds pet name, pet type, and number of days that pet has been at the store
@@ -120,6 +124,11 @@ public:
     * see example output */
     void writePetSummary(ofstream &outfile);
 
+    void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header, PetStoreList* storeListPtr);
+    
+    void processPet(PetData petInfo, string storeName);
+
+    void totalPets() const;
 
     //bonus class member functions
     /* insertAtFront (BONUS)
@@ -144,27 +153,11 @@ public:
 * returns false if the store was not found and/or if the deletion was 
 unsuccessful */
     bool deleteStore(string nameOfStoreToRemove);
-
-    void readPetStoreInfo(bool firstRow, ifstream& input, vector<string>& header, PetStoreList* storeListPtr);
-    
-    void processPet(PetData petInfo, string storeName);
-
-    void totalPets() const;
 };
 
 
 bool openFiles(ifstream& input, ofstream& output);
 
 int stringToInteger(string substring);
-
-int averagePetDays(vector<int>& numDaysAtStore);
-
-int randomPet(vector<string>& petNames);
-
-void uniquePetStores(vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, vector<string>& petStoreNames);
-
-int storeMostPets(vector<int>& uniquePetStoreNameCounts);
-
-bool writeFile(ofstream& output, vector<string>& petNames, vector<string>& uniquePetStoreNames, vector<int>& uniquePetStoreNameCounts, int storeMostPetsIndex, double averageDaysAtStore, int petOfTheMonthIndex, int totalPets);
 
 #endif

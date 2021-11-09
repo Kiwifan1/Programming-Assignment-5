@@ -5,7 +5,8 @@
  * Programming Assigment: PA5
  * Description: A pet store using Linked lists to store data
  * Notes: I will likely be writing everything from scratch again, to avoid the issue I held in the previous PAs with counting
- * 
+ *  -Attempting Extra Credit
+ *   
  *  11/3/21 - created definitions.cpp
  *  11/3/21 - created skeleton methods
  *  11/3/21 - created methods for almost all the class, imported methods from PA1
@@ -112,6 +113,23 @@ PetStoreList::PetStoreData* PetStoreList::createNode(string storeName)
    newNode->nextStore = nullptr;
    return newNode;
 }
+
+/**
+ * Name: Joshua Venable
+ * Date created: 11/8/21
+ * Date last modified:11/8/21
+ * Description: Overloaded function that makes a node and inserts it at the end
+ * @param storeName name of the store to be created as a string
+ * @return nothing
+ * @pre uncreated and unadded node to a linkedList
+ * @post added and created node to a linkedList
+ **/
+void PetStoreList::insertAtEnd(string storeName)
+{
+    PetStoreData* newStore = createNode(storeName);
+    insertAtEnd(newStore);
+}
+
 
 /**
  * Name: Joshua Venable 
@@ -340,6 +358,23 @@ bool PetStoreList::storeInList(string name)
 }
 
 /**
+ * Name: Joshua Venable
+ * Date created: 11/7/21
+ * Date last modified: 11/7/21
+ * Description: helper method to print out processing of a pet
+ * @param pet the pet data to be written from
+ * @return  nothing
+ * @pre unprinted pet data
+ * @post processed pet data
+ **/
+void PetStoreList::processPet(PetData pet, string storeName)
+{
+    cout << "Process a " << pet.petType << ", " "\"" << pet.petName << "\" ... " << pet.numDaysAtStore 
+        << " day(s) on site at store \"" <<  storeName << "\"" << endl; 
+}
+
+
+/**
  * Name: Joshua Venable 
  * Date created: 11/3/21
  * Date last modified: 11/3/21
@@ -380,103 +415,6 @@ void PetStoreList::calculatePetSummary()
       nodePtr = nodePtr->nextStore;
    }
    summaryData.averageDaysAtStore = totalDays/summaryData.numPets;
-}
-
-//------------------BONUS FUNCTIONS---------------------------
-
-/**
- * Name: Joshua Venable 
- * Date created: 11/3/21
- * Date last modified: 11/3/21
- * Description: inserts the PetStoreData "node" at the front of the list
- * @param newStoredata the data of the newStore going to be added to the front of the list
- * @return nothing
- * @pre unchanged linkedList
- * @post linkedList with new head pointer to the new storeData
- **/
-void PetStoreList::insertAtFront(PetStoreData* newStoredata)
-{
-   PetStoreData* nodePtr = nullptr;
-   newStoredata->nextStore = headPtr;
-   headPtr = newStoredata;
-}
-
-/**
- * Name: Joshua Venable 
- * Date created: 11/3/21
- * Date last modified: 11/3/21
- * Description: inserts the PetStoreData "node" at the position location in the list
- * @param newStoredata as a data pointer going to be added to linkedList
- * @param poisition the position to put newStoredata into as an int
- * @return true or false if the position is a valid position or not
- * @pre unadded storeData
- * @post added storeData or returned value of whether it can be added
- **/
-bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
-{
-   PetStoreData* nodePtr = headPtr;
-   int pos;
-   //while there is another store to point to
-   while(nodePtr->nextStore != nullptr)
-   {
-      //if we are at the index to insert
-      if(pos == position)
-      {
-         newStoredata->nextStore = nodePtr->nextStore;
-         nodePtr->nextStore = newStoredata;
-         return true;
-      }
-      pos++;
-      nodePtr = nodePtr->nextStore;
-   }
-   return false;
-}
-
-/**
- * Name: Joshua Venable 
- * Date created: 11/3/21
- * Date last modified: 11/3/21
- * Description: deletes a store and all of its petData
- * @param nameOfStoreToRemove name of the store that is going to be deleted as a string
- * @return true or false if store could be found and if deletion could happen
- * @pre store that may or may not be in linkedList
- * @post deleted store in linkedList or confirmation its not in the list
- **/
-bool PetStoreList::deleteStore(string nameOfStoreToRemove)
-{
-   PetStoreData* nodePtr = headPtr;
-   PetStoreData* prevNodePtr = headPtr;
-   //while there is another store to point to 
-   while(nodePtr->nextStore != nullptr)
-   {
-      //if the name of the pet store matches what needs to be removed
-      if(nodePtr->petStoreName == nameOfStoreToRemove)
-      {
-         prevNodePtr->nextStore = nodePtr->nextStore;
-         nodePtr->nextStore = nullptr; //sets reference to the node 
-         delete nodePtr;
-         return true;
-      }
-      prevNodePtr = nodePtr;
-      nodePtr = nodePtr->nextStore;
-   }
-   return false;
-}
-
-/**
- * Name: Joshua Venable
- * Date created: 11/7/21
- * Date last modified: 11/7/21
- * Description: helper method to print out processing of a pet
- * @param pet the pet data to be written from
- * @return  nothing
- * @pre unprinted pet data
- * @post processed pet data
- **/
-void PetStoreList::processPet(PetData pet, string storeName)
-{
-    cout << "Process a " << pet.petType << ", " "\"" << pet.petName << "\" ... " << pet.numDaysAtStore 
-        << " day(s) on site at store \"" <<  storeName << "\"" << endl; 
 }
 
 /**
@@ -600,4 +538,84 @@ void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<strin
     }
     cout << "All pet store data processed!\n" << endl;
     calculatePetSummary();
+}
+
+//------------------BONUS FUNCTIONS---------------------------
+
+/**
+ * Name: Joshua Venable 
+ * Date created: 11/3/21
+ * Date last modified: 11/3/21
+ * Description: inserts the PetStoreData "node" at the front of the list
+ * @param newStoredata the data of the newStore going to be added to the front of the list
+ * @return nothing
+ * @pre unchanged linkedList
+ * @post linkedList with new head pointer to the new storeData
+ **/
+void PetStoreList::insertAtFront(PetStoreData* newStoredata)
+{
+   newStoredata->nextStore = headPtr;
+   headPtr = newStoredata;
+}
+
+/**
+ * Name: Joshua Venable 
+ * Date created: 11/3/21
+ * Date last modified: 11/3/21
+ * Description: inserts the PetStoreData "node" at the position location in the list
+ * @param newStoredata as a data pointer going to be added to linkedList
+ * @param poisition the position to put newStoredata into as an int
+ * @return true or false if the position is a valid position or not
+ * @pre unadded storeData
+ * @post added storeData or returned value of whether it can be added
+ **/
+bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
+{
+   PetStoreData* nodePtr = headPtr;
+   int pos;
+   //while there is another store to point to
+   while(nodePtr->nextStore != nullptr)
+   {
+      //if we are at the index to insert
+      if(pos == position)
+      {
+         newStoredata->nextStore = nodePtr->nextStore;
+         nodePtr->nextStore = newStoredata;
+         return true;
+      }
+      pos++;
+      nodePtr = nodePtr->nextStore;
+   }
+   return false;
+}
+
+/**
+ * Name: Joshua Venable 
+ * Date created: 11/3/21
+ * Date last modified: 11/3/21
+ * Description: deletes a store and all of its petData
+ * @param nameOfStoreToRemove name of the store that is going to be deleted as a string
+ * @return true or false if store could be found and if deletion could happen
+ * @pre store that may or may not be in linkedList
+ * @post deleted store in linkedList or confirmation its not in the list
+ **/
+bool PetStoreList::deleteStore(string nameOfStoreToRemove)
+{
+   PetStoreData* nodePtr = headPtr;
+   PetStoreData* prevNodePtr = headPtr;
+   //while there is another store to point to 
+   while(nodePtr->nextStore != nullptr)
+   {
+      //if the name of the pet store matches what needs to be removed
+      if(nodePtr->petStoreName == nameOfStoreToRemove)
+      {
+         prevNodePtr->nextStore = nodePtr->nextStore;
+         nodePtr->nextStore = nullptr; //sets reference to the node 
+         delete nodePtr;
+         return true;
+      }
+      prevNodePtr = nodePtr;
+      nodePtr = nodePtr->nextStore;
+   }
+   return false;
 }

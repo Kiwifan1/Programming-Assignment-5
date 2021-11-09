@@ -5,6 +5,7 @@
  * Programming Assigment: PA5
  * Description: A pet store using Linked lists to store data
  * Notes: I will likely be writing everything from scratch again, to avoid the issue I held in the previous PAs with counting
+ *   -Attempting Extra Credit
  * 
  *  11/3/21 - Added variables
  *  11/8/21 - added display and write to file methods to main
@@ -23,10 +24,18 @@ int main()
     bool firstRow = true;
     PetStoreList storeList; //the linked list object
     PetStoreList* storeListPtr = &storeList;
+    
+
     if(openFiles(infile, outfile))
     {
         storeList.readPetStoreInfo(firstRow, infile, header, storeListPtr);
     }
     storeList.writePetList(outfile);
     storeList.displayPetList();
+
+    //bonus code
+
+    cout << "*******BONUS TASK******" << endl;
+    storeList.insertAtEnd("BonusStore1");
+    storeList.insertAtEnd("BonusStore2");
 }
