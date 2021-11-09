@@ -11,6 +11,7 @@
  *  11/3/21 - imported methods from PA1
  *  11/5/21 - added some helper methods for class methods, added readPetInfo the main method reading from file
  *  11/8/21 - deleted a lot of methods that are unused
+ *  11/9/21 - implemented extra credit methods
  **/
 
 #ifndef HEADER_H
@@ -153,6 +154,8 @@ public:
 * returns false if the store was not found and/or if the deletion was 
 unsuccessful */
     bool deleteStore(string nameOfStoreToRemove);
+
+    void bonusCreation(void);
 };
 
 

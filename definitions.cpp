@@ -13,6 +13,7 @@
  *  11/7/21 - added constructor and destructor, changed up readPetStore
  *  11/8/21 - fixed DisplaySummary and finished up readInfo from csv file
  *  11/8/21 - finished display petList, as well as write petList, removed unecessary methods
+ *  11/9/21 - implemented extra credit methods
  * */
 
 #include "header.h"
@@ -572,19 +573,26 @@ void PetStoreList::insertAtFront(PetStoreData* newStoredata)
 bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
 {
    PetStoreData* nodePtr = headPtr;
-   int pos;
+   PetStoreData* prevNodePtr = nullptr;
+   int pos = 1;
    //while there is another store to point to
-   while(nodePtr->nextStore != nullptr)
+   while(nodePtr != nullptr && pos != position)
    {
-      //if we are at the index to insert
-      if(pos == position)
-      {
-         newStoredata->nextStore = nodePtr->nextStore;
-         nodePtr->nextStore = newStoredata;
-         return true;
-      }
-      pos++;
-      nodePtr = nodePtr->nextStore;
+       prevNodePtr = nodePtr;
+       nodePtr = nodePtr->nextStore;
+       pos ++;
+   }
+   if(pos == position)
+   {
+       prevNodePtr->nextStore = newStoredata;
+       newStoredata->nextStore = nodePtr;
+       return true;
+   }
+   else if(prevNodePtr != nullptr)
+   {
+       newStoredata->nextStore = nodePtr;
+       prevNodePtr->nextStore = newStoredata;
+       return true;
    }
    return false;
 }
@@ -592,7 +600,7 @@ bool PetStoreList::insertAtPosition(PetStoreData* newStoredata, int position)
 /**
  * Name: Joshua Venable 
  * Date created: 11/3/21
- * Date last modified: 11/3/21
+ * Date last modified: 11/9/21
  * Description: deletes a store and all of its petData
  * @param nameOfStoreToRemove name of the store that is going to be deleted as a string
  * @return true or false if store could be found and if deletion could happen
@@ -604,18 +612,69 @@ bool PetStoreList::deleteStore(string nameOfStoreToRemove)
    PetStoreData* nodePtr = headPtr;
    PetStoreData* prevNodePtr = headPtr;
    //while there is another store to point to 
-   while(nodePtr->nextStore != nullptr)
+   if(headPtr->petStoreName == nameOfStoreToRemove)
    {
-      //if the name of the pet store matches what needs to be removed
-      if(nodePtr->petStoreName == nameOfStoreToRemove)
-      {
-         prevNodePtr->nextStore = nodePtr->nextStore;
-         nodePtr->nextStore = nullptr; //sets reference to the node 
-         delete nodePtr;
-         return true;
-      }
-      prevNodePtr = nodePtr;
-      nodePtr = nodePtr->nextStore;
+       nodePtr = headPtr->nextStore;
+       delete headPtr;
+       headPtr = nodePtr;
+   }
+   else
+   {
+       while(nodePtr != nullptr && nodePtr->petStoreName != nameOfStoreToRemove)
+       {
+           prevNodePtr = nodePtr;
+           nodePtr = nodePtr->nextStore;
+       }
+       if(prevNodePtr != nullptr && nodePtr != nullptr)
+       {
+           prevNodePtr->nextStore = nodePtr->nextStore;
+           delete nodePtr;
+       }
+       prevNodePtr = nodePtr;
    }
    return false;
+}
+
+
+/**
+ * Name: Joshua Venable
+ * Date created: 11/9/2021
+ * Date last modified: 11/9/2021
+ * Description: manually creates two new nodes
+ * @return nothing
+ * @pre 2 unmade store nodes
+ * @post 2 store nodes with 2 pets each in them
+ **/
+void PetStoreList::bonusCreation()
+{
+    PetStoreData* bonusStore1 = createNode("BonusStore1");
+    PetStoreData* bonusStore2 = createNode("BonusStore2");
+    PetData bonusPet1;
+    PetData bonusPet2;
+    PetData bonusPet3;
+    PetData bonusPet4;
+    bonusPet1.numDaysAtStore = 4;
+    bonusPet1.petName = "Bobby";
+    bonusPet1.petType = "monkey";
+    
+    bonusPet2.numDaysAtStore = 12;
+    bonusPet2.petName = "Billy";
+    bonusPet2.petType = "Octopus";
+
+    bonusPet3.numDaysAtStore = 48;
+    bonusPet3.petName = "Daryl";
+    bonusPet3.petType = "dolphin";
+
+    bonusPet4.numDaysAtStore = 134;
+    bonusPet4.petName = "tiphany";
+    bonusPet4.petType = "tiger";
+
+    bonusStore1->petData.push_back(bonusPet1);
+    bonusStore1->petData.push_back(bonusPet2);
+
+    bonusStore2->petData.push_back(bonusPet3);
+    bonusStore2->petData.push_back(bonusPet4);
+
+    this->insertAtFront(bonusStore1);
+    this->insertAtPosition(bonusStore2, 3);
 }

@@ -10,6 +10,7 @@
  *  11/3/21 - Added variables
  *  11/8/21 - added display and write to file methods to main
  *  11/8/21 - removal of unneeded variables
+ *  11/9/21 - implemented extra credit
  **/
 
 #include "header.h"
@@ -36,6 +37,8 @@ int main()
     //bonus code
 
     cout << "*******BONUS TASK******" << endl;
-    storeList.insertAtEnd("BonusStore1");
-    storeList.insertAtEnd("BonusStore2");
+    storeList.bonusCreation();
+    storeList.calculatePetSummary();
+
+    storeList.displayPetList();
 }
