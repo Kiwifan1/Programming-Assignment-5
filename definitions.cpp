@@ -235,6 +235,7 @@ void PetStoreList::displayPetList() const
     else
     {
         nodePtr = headPtr;
+        //goes through all stores in the linkedList
         while (nodePtr != nullptr)
         {
             cout << "__________________________________" << endl;
@@ -242,6 +243,7 @@ void PetStoreList::displayPetList() const
             cout << "**********************************" << endl;
             cout << "| Number of pets: " << nodePtr->petData.size()
                  << "\n| Pet Information: \n";
+            //goes through all pets in the store
             for (int petIndex = 0; petIndex < nodePtr->petData.size(); petIndex++)
             {
                 petInfo = nodePtr->petData.at(petIndex);
@@ -303,6 +305,7 @@ void PetStoreList::writePetList(ofstream &outfile)
     else
     {
         nodePtr = headPtr;
+        //goes through every store in the linkedList
         while (nodePtr != nullptr)
         {
             outfile << "__________________________________" << endl;
@@ -310,6 +313,7 @@ void PetStoreList::writePetList(ofstream &outfile)
             outfile << "**********************************" << endl;
             outfile << "| Number of pets: " << nodePtr->petData.size()
                  << "\n| Pet Information: \n";
+            //goes through all the pets in the store
             for (int petIndex = 0; petIndex < nodePtr->petData.size(); petIndex++)
             {
                 petInfo = nodePtr->petData.at(petIndex);
@@ -498,10 +502,12 @@ void PetStoreList::readPetStoreInfo(bool firstRow, ifstream& input, vector<strin
                     else
                     {
                         nodePtr = headPtr;
+                        //while loop that goes through linkedList to find the store since it exists if it gets to this point
                         while(nodePtr != nullptr)
                         {
                             if(nodePtr->petStoreName == word)
                             {
+                                //makes the address point to what we have in the linkedList
                                 petStoreInfo = nodePtr;
                                 break;
                             }
