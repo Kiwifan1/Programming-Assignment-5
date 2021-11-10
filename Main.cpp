@@ -36,7 +36,7 @@ int main()
 
     //bonus code
 
-    cout << "*******BONUS TASK******" << endl;
+    cout << "\n\n*******BONUS TASK******" << endl << endl;
     storeList.bonusCreation();
     storeList.calculatePetSummary();
 
