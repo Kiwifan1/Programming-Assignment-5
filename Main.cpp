@@ -11,6 +11,7 @@
  *  11/8/21 - added display and write to file methods to main
  *  11/8/21 - removal of unneeded variables
  *  11/9/21 - implemented extra credit
+ *  11/17/21 - separated pet summaries
  **/
 
 #include "header.h"
@@ -31,7 +32,10 @@ int main()
     {
         storeList.readPetStoreInfo(firstRow, infile, header, storeListPtr);
     }
+    storeList.writePetSummary(outfile);
     storeList.writePetList(outfile);
+
+    storeList.displayPetSummary();
     storeList.displayPetList();
 
     //bonus code
@@ -39,6 +43,7 @@ int main()
     cout << "\n\n*******BONUS TASK******" << endl << endl;
     storeList.bonusCreation();
     storeList.calculatePetSummary();
-
+    
+    storeList.displayPetSummary();
     storeList.displayPetList();
 }

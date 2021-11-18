@@ -14,6 +14,7 @@
  *  11/8/21 - fixed DisplaySummary and finished up readInfo from csv file
  *  11/8/21 - finished display petList, as well as write petList, removed unecessary methods
  *  11/9/21 - implemented extra credit methods
+ *  11/17/21 - separated petSummaries
  * */
 
 #include "header.h"
@@ -227,7 +228,6 @@ void PetStoreList::displayPetList() const
 {
     PetStoreData* nodePtr;
     PetData petInfo;
-    displayPetSummary();
     if(headPtr == nullptr)
     {
         cout << "No stores read!";
@@ -297,7 +297,6 @@ void PetStoreList::writePetList(ofstream &outfile)
     PetData petInfo;
     cout << "Generating summary report...\n\n";
 
-    writePetSummary(outfile);
     if(headPtr == nullptr)
     {
         outfile << "No stores read!";
